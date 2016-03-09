@@ -9,6 +9,9 @@
 		 */
 		initialize: function() {
 			lazyloader.entrySets = [];
+			lazyloader.allEntries = [];
+			lazyloader.nextEntriesIndex = 0;
+			lazyloader.nextUnusedEntriesIndex = 0;
 
 			lazyloader.setBusy();
 			lazyloader.fetchEntries();
@@ -93,6 +96,8 @@
 					$button.blur();
 
 					lazyloader.entrySets[ index ] = response.entries;
+					lazyloader.allEntries[ lazyloader.nextEntriesIndex ] = response.entries;
+					lazyloader.nextEntriesIndex += 1;
 				}
 
 				lazyloader.setUnbusy();
@@ -127,11 +132,13 @@
 				return;
 			}
 
-			$.each( lazyloader.entrySets[ setIndex ], function( i, entry ) {
+			$.each( lazyloader.allEntries[ lazyloader.nextUnusedEntriesIndex ], function( i, entry ) {
 				if ( entry.html ) {
 					$button.before( $( entry.html ) );
 				}
 			} );
+
+			lazyloader.nextUnusedEntriesIndex += 1;
 
 			// Convert the timestamps of the newly inserted entries into human time diffed timestamps.
 			liveblog.entriesContainer.updateTimes();
