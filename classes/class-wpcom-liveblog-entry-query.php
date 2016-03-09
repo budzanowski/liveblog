@@ -40,7 +40,8 @@ class WPCOM_Liveblog_Entry_Query {
 	 * @param array $args the same args for the core `get_comments()`
 	 */
 	public function get_all( $args = array() ) {
-		return self::remove_replaced_entries( $this->get( $args ) );
+		//return self::remove_replaced_entries( $this->get( $args ) );
+		return $this->get( $args );
 	}
 
 	public function count( $args = array() ) {
