@@ -9,9 +9,11 @@
 		 */
 		initialize: function() {
 			lazyloader.entrySets = [];
-			lazyloader.allEntries = [];
+			lazyloader.EntriesToRender = [];
+			lazyloader.EntriesToDelete = [];
+			lazyloader.EntriesToUpdate = [];
 			lazyloader.nextEntriesIndex = 0;
-			lazyloader.nextUnusedEntriesIndex = 0;
+			lazyloader.consumedEnriesIndex = -1;
 
 			lazyloader.setBusy();
 			lazyloader.fetchEntries();
@@ -96,11 +98,27 @@
 					$button.blur();
 
 					lazyloader.entrySets[ index ] = response.entries;
-					lazyloader.allEntries[ lazyloader.nextEntriesIndex ] = response.entries;
-					lazyloader.nextEntriesIndex += 1;
+					lazyloader.splitEntriesOnType( response.entries );
 				}
 
 				lazyloader.setUnbusy();
+			} );
+		},
+
+		splitEntriesOnType: function( entries ) {
+			$.each( entries, function( i, entry ) {
+				switch( entry.type ) {
+					case 'new':
+						lazyloader.EntriesToRender.push( entry );
+						break;
+					case 'update':
+						lazyloader.EntriesToUpdate.push( entry );
+						break;
+					case 'delete':
+						lazyloader.EntriesToDelete.push( entry );
+					default:
+						break;
+				}
 			} );
 		},
 
@@ -132,13 +150,17 @@
 				return;
 			}
 
-			$.each( lazyloader.allEntries[ lazyloader.nextUnusedEntriesIndex ], function( i, entry ) {
-				if ( entry.html ) {
-					$button.before( $( entry.html ) );
-				}
-			} );
+			var nextEntry = lazyloader.consumedEnriesIndex + 1;
 
-			lazyloader.nextUnusedEntriesIndex += 1;
+			if( lazyloader.EntriesToRender.length < nextEntry ) {
+				lazyloader.fetchEntries( setIndex );
+			}
+
+			for(var i = nextEntry; i < lazyloader.EntriesToRender.length; i++) {
+				var entry = lazyloader.EntriesToRender[ i ];
+				$button.before( $( entry.html ) );
+				lazyloader.consumedEnriesIndex += 1;
+			}
 
 			// Convert the timestamps of the newly inserted entries into human time diffed timestamps.
 			liveblog.entriesContainer.updateTimes();
