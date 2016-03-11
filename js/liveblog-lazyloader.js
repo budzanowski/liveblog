@@ -104,6 +104,7 @@
 
 					lazyloader.entrySets[ index ] = response.entries;
 					lazyloader.splitEntriesOnType( response.entries );
+					lazyloader.updateAndDeleteEntriesToRender();
 					if ( lazyloader.consumedEntriesIndex == -1 ) {
 						//Display first entries right away
 						lazyloader.renderEntries( 0 );
@@ -129,6 +130,25 @@
 						break;
 				}
 			} );
+		},
+
+		updateAndDeleteEntriesToRender: function() {
+			//apply updates
+			for( var i = 0; i < lazyloader.EntriesToRender.length; i++ ) {
+				var entry = lazyloader.EntriesToRender[ i ];
+				for( var j = 0; j < lazyloader.EntriesToUpdate.length; j++ ) {
+					var update = lazyloader.EntriesToUpdate[ j ];
+					if ( entry.id == update.id ) {
+						entry.html = update.html;
+						delete lazyloader.EntriesToUpdate[ j ];
+					}
+				}
+				lazyloader.EntriesToUpdate = lazyloader.EntriesToUpdate.filter( function() { return true; } );
+			}
+			//delete
+			// lazyloader.EntriesToRender = _.reject( lazyloader.EntriesToRender, function( entry ) {
+			//
+			// } );
 		},
 
 		/**
