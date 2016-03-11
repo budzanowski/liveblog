@@ -124,8 +124,8 @@ class WPCOM_Liveblog_Entry {
 		if ( ! empty( $output ) )
 			return $output;
 
-		if ( empty( $this->comment->comment_content ) )
-			return '<p>Delete event!</p>';
+		//if ( empty( $this->comment->comment_content ) )
+		//	return $output;
 
 		$entry = $this->get_fields_for_render();
 
