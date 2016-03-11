@@ -13,7 +13,7 @@
 			lazyloader.EntriesToDelete = [];
 			lazyloader.EntriesToUpdate = [];
 			lazyloader.nextEntriesIndex = 0;
-			lazyloader.consumedEnriesIndex = -1;
+			lazyloader.consumedEntriesIndex = -1;
 
 			lazyloader.setBusy();
 			lazyloader.fetchEntries();
@@ -23,6 +23,7 @@
 			if ( liveblog.$key_entry_container.length ) {
 				liveblog.$key_entry_container.on( 'click', 'a', lazyloader.clickKeyEventLink );
 			}
+
 		},
 
 		/**
@@ -74,6 +75,10 @@
 
 			if ( $previousEntry.length ) {
 				maxTimestamp = parseInt( $previousEntry.data( 'timestamp' ) ) || 0;
+			} else {
+				//This means that we load first entries so we will use value
+				//passed by wp_localize_script 'latest_entry_timestamp'
+				maxTimestamp = liveblog_settings.latest_entry_timestamp;
 			}
 
 			if ( $nextEntry.length ) {
@@ -99,6 +104,10 @@
 
 					lazyloader.entrySets[ index ] = response.entries;
 					lazyloader.splitEntriesOnType( response.entries );
+					if ( lazyloader.consumedEntriesIndex == -1 ) {
+						//Display first entries right away
+						lazyloader.renderEntries( 0 );
+					}
 				}
 
 				lazyloader.setUnbusy();
@@ -150,16 +159,16 @@
 				return;
 			}
 
-			var nextEntry = lazyloader.consumedEnriesIndex + 1;
+			var nextEntry = lazyloader.consumedEntriesIndex + 1;
 
-			if( lazyloader.EntriesToRender.length < nextEntry ) {
+			if( lazyloader.EntriesToRender.length == nextEntry ) {
 				lazyloader.fetchEntries( setIndex );
 			}
 
 			for(var i = nextEntry; i < lazyloader.EntriesToRender.length; i++) {
 				var entry = lazyloader.EntriesToRender[ i ];
 				$button.before( $( entry.html ) );
-				lazyloader.consumedEnriesIndex += 1;
+				lazyloader.consumedEntriesIndex += 1;
 			}
 
 			// Convert the timestamps of the newly inserted entries into human time diffed timestamps.
