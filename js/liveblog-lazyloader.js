@@ -14,6 +14,7 @@
 			lazyloader.EntriesToUpdate = [];
 			lazyloader.nextEntriesIndex = 0;
 			lazyloader.consumedEntriesIndex = -1;
+			lazyloader.oldesTimestamp = liveblog_settings.latest_entry_timestamp;
 
 			lazyloader.setBusy();
 			lazyloader.fetchEntries();
@@ -69,17 +70,9 @@
 
 			var $previousEntry = $button.prev( '.liveblog-entry' ),
 				$nextEntry = $button.next( '.liveblog-entry' ),
-				maxTimestamp = 0,
+				maxTimestamp = lazyloader.oldesTimestamp,
 				minTimestamp = 0,
 				url = liveblog_settings.endpoint_url + 'lazyload/';
-
-			if ( $previousEntry.length ) {
-				maxTimestamp = parseInt( $previousEntry.data( 'timestamp' ) ) || 0;
-			} else {
-				//This means that we load first entries so we will use value
-				//passed by wp_localize_script 'latest_entry_timestamp'
-				maxTimestamp = liveblog_settings.latest_entry_timestamp;
-			}
 
 			if ( $nextEntry.length ) {
 				minTimestamp = parseInt( $nextEntry.data( 'timestamp' ) ) || 0;
@@ -103,6 +96,8 @@
 					$button.blur();
 
 					lazyloader.entrySets[ index ] = response.entries;
+					lazyloader.oldesTimestamp =
+						$( response.entries[ response.entries.length - 1 ].html ).data( 'timestamp' );
 					lazyloader.splitEntriesOnType( response.entries );
 					lazyloader.updateAndDeleteEntriesToRender();
 					if ( lazyloader.consumedEntriesIndex == -1 ) {
