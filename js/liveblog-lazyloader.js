@@ -133,22 +133,44 @@
 		},
 
 		updateAndDeleteEntriesToRender: function() {
-			//apply updates
+			lazyloader.updateEntries();
+			lazyloader.deleteEntries();
+		},
+
+		updateEntries: function() {
 			for( var i = 0; i < lazyloader.EntriesToRender.length; i++ ) {
 				var entry = lazyloader.EntriesToRender[ i ];
 				for( var j = 0; j < lazyloader.EntriesToUpdate.length; j++ ) {
 					var update = lazyloader.EntriesToUpdate[ j ];
 					if ( entry.id == update.id ) {
-						entry.html = update.html;
+						lazyloader.updateEntry( entry, update );
 						delete lazyloader.EntriesToUpdate[ j ];
 					}
 				}
+				//Remove used entries
 				lazyloader.EntriesToUpdate = lazyloader.EntriesToUpdate.filter( function() { return true; } );
 			}
-			//delete
-			// lazyloader.EntriesToRender = _.reject( lazyloader.EntriesToRender, function( entry ) {
-			//
-			// } );
+		},
+
+		updateEntry: function( entry, update ) {
+			entry.html = update.html;
+		},
+
+		deleteEntries: function() {
+			for( var i = 0; i < lazyloader.EntriesToRender.length; i++ ) {
+				var entry = lazyloader.EntriesToRender[ i ];
+				for( var j = 0; j < lazyloader.EntriesToDelete.length; j++ ) {
+					var delete_entry = lazyloader.EntriesToDelete[ j ];
+					if ( entry.id == delete_entry.id ) {
+						delete lazyloader.EntriesToDelete[ j ];
+						delete lazyloader.EntriesToRender[ i ];
+					}
+				}
+				//Remove used entries empty space
+				lazyloader.EntriesToDelete = lazyloader.EntriesToDelete.filter( function() { return true; } );
+				//Remove deleted entries empty space
+				lazyloader.EntriesToRender = lazyloader.EntriesToRender.filter( function() { return true; } );
+			}
 		},
 
 		/**
