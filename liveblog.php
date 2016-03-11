@@ -806,7 +806,7 @@ final class WPCOM_Liveblog {
 		$liveblog_output  = '<div id="liveblog-container" class="'. self::$post_id .'">';
 		$liveblog_output .= self::get_editor_output();
 		$liveblog_output .= '<div id="liveblog-update-spinner"></div>';
-		$liveblog_output .= self::get_all_entry_output();
+		$liveblog_output .= self::get_lazyloading_entry_point();
 		$liveblog_output .= '</div>';
 
 		$liveblog_output = apply_filters( 'liveblog_add_to_content', $liveblog_output, $content, self::$post_id );
@@ -824,6 +824,16 @@ final class WPCOM_Liveblog {
 			return;
 
 		return self::get_template_part( 'liveblog-form.php' );
+	}
+
+	/**
+	 * Get lazyloading entry point
+	 */
+	private static function get_lazyloading_entry_point() {
+	$state = self::get_liveblog_state();
+	$show_archived_message = 'archive' == $state && self::current_user_can_edit_liveblog();
+	$entries = array();
+		return self::get_template_part( 'liveblog-loop.php', compact( 'entries', 'show_archived_message' ) );
 	}
 
 	/**
