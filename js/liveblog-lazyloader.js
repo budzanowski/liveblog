@@ -198,10 +198,6 @@
 
 			var nextEntry = lazyloader.consumedEntriesIndex + 1;
 
-			if( lazyloader.EntriesToRender.length == nextEntry ) {
-				lazyloader.fetchEntries( setIndex );
-			}
-
 			for(var i = nextEntry; i < lazyloader.EntriesToRender.length; i++) {
 				var entry = lazyloader.EntriesToRender[ i ];
 				$button.before( $( entry.html ) );
