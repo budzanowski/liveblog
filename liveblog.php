@@ -564,7 +564,15 @@ final class WPCOM_Liveblog {
 			) );
 		}
 
-		$entries = array_slice( $entries, 0, WPCOM_Liveblog_Lazyloader::get_number_of_entries() );
+		//Calculate number of entries to put into response as aligned to
+		// $number_of_default_entries from PCOM_Liveblog_Lazyloader
+		$limit = WPCOM_Liveblog_Lazyloader::get_number_of_entries();
+		$alligned = count( $entries ) % $limit;
+		if ( ( 0 == $alligned ) && ( $entries >= $limit ) ) {
+			$alligned = $limit;
+		}
+
+		$entries = array_slice( $entries, 0, $alligned );
 
 		$entries_for_json = array();
 
