@@ -14,7 +14,11 @@
 			lazyloader.EntriesToUpdate = [];
 			lazyloader.nextEntriesIndex = 0;
 			lazyloader.consumedEntriesIndex = -1;
-			lazyloader.oldesTimestamp = liveblog_settings.latest_entry_timestamp;
+			/**
+			 * We add one to latest_entry_timestamp to include entry with latest timestamp,
+			 * because when we download first chunk we want to have latest entries
+			 */
+			lazyloader.oldesTimestamp = liveblog_settings.latest_entry_timestamp + 1;
 
 			lazyloader.setBusy();
 			lazyloader.fetchEntries();
