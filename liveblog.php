@@ -553,7 +553,7 @@ final class WPCOM_Liveblog {
 		// Get all Liveblog entries that are to be lazyloaded.
 		$entries = self::$entry_query->get_for_lazyloading(
 			isset( $fragments[1] ) ? (int) $fragments[1] : 0,
-			isset( $fragments[2] ) ? (int) $fragments[2] : 0
+			0
 		);
 		if ( ! $entries ) {
 			do_action( 'liveblog_entry_request_empty' );
