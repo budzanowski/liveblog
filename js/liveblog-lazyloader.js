@@ -158,9 +158,9 @@
 				}
 				//Remove used entries empty space
 				lazyloader.EntriesToDelete = lazyloader.EntriesToDelete.filter( function() { return true; } );
-				//Remove deleted entries empty space
-				lazyloader.EntriesToRender = lazyloader.EntriesToRender.filter( function() { return true; } );
 			}
+			//Remove deleted entries empty space
+			lazyloader.EntriesToRender = lazyloader.EntriesToRender.filter( function() { return true; } );
 		},
 
 		/**
