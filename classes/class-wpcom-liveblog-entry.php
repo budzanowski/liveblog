@@ -12,6 +12,7 @@ class WPCOM_Liveblog_Entry {
 	 * another entry, we store the other entry's ID in this meta key.
 	 */
 	const replaces_meta_key   = 'liveblog_replaces';
+	const deletes_meta_key    = 'liveblog_deletes';
 
 	private $comment;
 	private $type = 'new';
@@ -20,10 +21,11 @@ class WPCOM_Liveblog_Entry {
 	public function __construct( $comment ) {
 		$this->comment  = $comment;
 		$this->replaces = get_comment_meta( $comment->comment_ID, self::replaces_meta_key, true );
-		if ( $this->replaces && $this->get_content() ) {
+		$this->deletes  = get_comment_meta( $comment->comment_ID, self::deletes_meta_key, true );
+		if ( $this->replaces ) {
 			$this->type = 'update';
 		}
-		if ( $this->replaces && !$this->get_content() ) {
+		if ( $this->deletes ) {
 			$this->type = 'delete';
 		}
 	}
@@ -85,10 +87,16 @@ class WPCOM_Liveblog_Entry {
 
 	public function for_json() {
 		$entry = array(
-			'id'   => $this->replaces ? $this->replaces : $this->get_id(),
 			'type' => $this->get_type(),
 			'html' => $this->render(),
 		);
+		if ( $this->replaces ) {
+			$entry['id'] = $this->replaces;
+		} elseif ( $this->deletes ) {
+			$entry['id'] = $this->deletes;
+		} else {
+			$entry['id'] = $this->get_id();
+		}
 		$entry = apply_filters( 'liveblog_entry_for_json', $entry, $this );
 		return (object) $entry;
 	}
@@ -216,7 +224,7 @@ class WPCOM_Liveblog_Entry {
 			return $comment;
 		}
 		do_action( 'liveblog_delete_entry', $comment->comment_ID, $args['post_id'] );
-		add_comment_meta( $comment->comment_ID, self::replaces_meta_key, $args['entry_id'] );
+		add_comment_meta( $comment->comment_ID, self::deletes_meta_key, $args['entry_id'] );
 		//wp_delete_comment( $args['entry_id'] );
 		$entry = self::from_comment( $comment );
 		return $entry;
