@@ -1,4 +1,4 @@
-/* global liveblog, liveblog_settings, _, alert, jQuery, moment, momentLang, Backbone */
+/* global liveblog, liveblog_settings, lazyloader, _, alert, jQuery, moment, momentLang, Backbone */
 window.liveblog = window.liveblog || {};
 
 ( function( $ ) {
@@ -281,6 +281,11 @@ window.liveblog = window.liveblog || {};
 		return $('.liveblog-entry-class-' + id );
 	};
 
+	// We rely on lazyloader to overwrite this function. This way it can be
+	// used as callback to handle fresh events of update end delete type
+	// that target entries not currently in DOM
+	liveblog.lazyloaderHandleEvent = function( ) {},
+
 	liveblog.display_entry = function( new_entry, duration ) {
 		if ( new_entry instanceof liveblog.Entry ) {
 			new_entry = new_entry.attributes;
@@ -289,10 +294,18 @@ window.liveblog = window.liveblog || {};
 		var $entry = liveblog.get_entry_by_id( new_entry.id );
 		if ('new' === new_entry.type && !$entry.length) {
 			liveblog.add_entry( new_entry, duration );
-		} else if ('update' === new_entry.type && $entry.length) {
-			liveblog.update_entry( $entry, new_entry );
-		} else if ('delete' === new_entry.type && $entry.length) {
-			liveblog.delete_entry( $entry );
+		} else if ('update' === new_entry.type) {
+			if ( $entry.length ) {
+				liveblog.update_entry( $entry, new_entry );
+			} else {
+				liveblog.lazyloaderHandleEvent( new_entry );
+			}
+		} else if ('delete' === new_entry.type) {
+			if ( $entry.length) {
+				liveblog.delete_entry( $entry );
+			} else {
+				liveblog.lazyloaderHandleEvent( new_entry );
+			}
 		}
 
 		$( document.body ).trigger( 'post-load' );

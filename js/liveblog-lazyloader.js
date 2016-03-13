@@ -8,6 +8,12 @@
 		 * Initializes properties, fetches the first entries, and attaches event handlers.
 		 */
 		initialize: function() {
+			/**
+			 * Set callback for events for entries not in DOM that where loaded by
+			 * liveblog.get_recent_entries
+			 */
+			liveblog.lazyloaderHandleEvent = lazyloader.handleFreshEvent;
+
 			lazyloader.entrySets = [];
 			lazyloader.EntriesToRender = [];
 			lazyloader.EntriesToDelete = [];
@@ -165,6 +171,16 @@
 			}
 			//Remove deleted entries empty space
 			lazyloader.EntriesToRender = lazyloader.EntriesToRender.filter( function() { return true; } );
+		},
+
+		/**
+		 * Handles fresh events loaded by liveblog.js that are targeting events
+		 * not yet downloaded by lazyloader.
+		 * @param {event} entry - update or delete event to handle
+		 */
+		handleFreshEvent: function( entry ) {
+			lazyloader.splitEntriesOnType( [entry] );
+			lazyloader.updateAndDeleteEntriesToRender();
 		},
 
 		/**
