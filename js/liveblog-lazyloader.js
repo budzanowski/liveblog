@@ -27,7 +27,7 @@
 			lazyloader.oldesTimestamp = liveblog_settings.latest_entry_timestamp + 1;
 
 			lazyloader.setBusy();
-			lazyloader.fetchEntries();
+			lazyloader.fetchEntries( 0 );
 
 			liveblog.$entry_container.on( 'click', '.liveblog-load-more', lazyloader.clickLoadMoreButton );
 
@@ -65,6 +65,8 @@
 
 		/**
 		 * Fetches the next entries for the entry set with the given index.
+		 * This is a recursive call. It will send as many requests as needed to
+		 * get minimal number of entries that can be displayed
 		 * @param {number} [setIndex=0] - The index of an entry set.
 		 */
 		fetchEntries: function( setIndex ) {
@@ -97,21 +99,25 @@
 
 				if ( ! response.entries || ! response.entries.length ) {
 					$button.remove();
+					lazyloader.setUnbusy();
+					lazyloader.displayForTheFirstTime()
 				} else {
 					$button.blur();
-
-					lazyloader.entrySets[ index ] = response.entries;
 					lazyloader.oldesTimestamp =
 						$( response.entries[ response.entries.length - 1 ].html ).data( 'timestamp' );
 					lazyloader.splitEntriesOnType( response.entries );
 					lazyloader.updateAndDeleteEntriesToRender();
-					if ( lazyloader.consumedEntriesIndex == -1 ) {
-						//Display first entries right away
-						lazyloader.renderEntries( 0 );
+
+					var availableEntries = lazyloader.EntriesToRender.length -
+						( lazyloader.consumedEntriesIndex + 1 );
+					if ( availableEntries >= settings.numberOfEntries ) {
+						lazyloader.setUnbusy();
+						lazyloader.displayForTheFirstTime();
+					} else {
+						lazyloader.fetchEntries( index );
 					}
 				}
 
-				lazyloader.setUnbusy();
 			} );
 		},
 
