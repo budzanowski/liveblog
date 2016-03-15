@@ -121,6 +121,12 @@
 			} );
 		},
 
+		displayForTheFirstTime: function() {
+			if ( lazyloader.consumedEntriesIndex == -1 && lazyloader.EntriesToRender.length ) {
+					lazyloader.renderEntries( 0 );
+			}
+		},
+
 		splitEntriesOnType: function( entries ) {
 			$.each( entries, function( i, entry ) {
 				switch( entry.type ) {
