@@ -98,9 +98,9 @@
 				var $button = lazyloader.getButton( index );
 
 				if ( ! response.entries || ! response.entries.length ) {
+					lazyloader.renderEntries( 0 );
 					$button.remove();
 					lazyloader.setUnbusy();
-					lazyloader.displayForTheFirstTime()
 				} else {
 					$button.blur();
 					lazyloader.oldesTimestamp =
