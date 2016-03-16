@@ -88,6 +88,18 @@ class WPCOM_Liveblog_Entry {
 		return $this->type;
 	}
 
+	public function is_new() {
+		return self::new_type == $this->get_type();
+	}
+
+	public function is_delete() {
+		return self::delete_type == $this->get_type();
+	}
+
+	public function is_update() {
+		return self::update_type == $this->get_type();
+	}
+
 	public function is_key_event() {
 		return $this->key_event;
 	}
