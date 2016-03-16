@@ -30,8 +30,9 @@ class WPCOM_Liveblog_Entry {
 	 * what is the type of this event
 	 */
 	private function set_type() {
-		$this->replaces = get_comment_meta( $this->comment->comment_ID, self::replaces_meta_key, true );
-		$this->deletes  = get_comment_meta( $this->comment->comment_ID, self::deletes_meta_key, true );
+		$this->replaces  = get_comment_meta( $this->comment->comment_ID, self::replaces_meta_key, true );
+		$this->deletes   = get_comment_meta( $this->comment->comment_ID, self::deletes_meta_key, true );
+		$this->key_event = get_comment_meta( $this->comment->comment_ID, WPCOM_Liveblog_Entry_Key_Events::meta_key, true);
 		if ( $this->replaces ) {
 			$this->type = self::update_type;
 		} elseif ( $this->deletes ) {
@@ -85,6 +86,10 @@ class WPCOM_Liveblog_Entry {
 
 	public function get_type() {
 		return $this->type;
+	}
+
+	public function is_key_event() {
+		return $this->key_event;
 	}
 
 	/**
