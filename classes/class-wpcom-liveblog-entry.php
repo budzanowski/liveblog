@@ -117,6 +117,7 @@ class WPCOM_Liveblog_Entry {
 		$entry = array(
 			'type' => $this->get_type(),
 			'html' => $this->render(),
+			'key'  => '',
 		);
 		if ( $this->replaces ) {
 			$entry['id'] = $this->replaces;
@@ -125,8 +126,23 @@ class WPCOM_Liveblog_Entry {
 		} else {
 			$entry['id'] = $this->get_id();
 		}
-		$entry = apply_filters( 'liveblog_entry_for_json', $entry, $this );
+
+		$entry = $this->render_key_event( $entry );
+
 		return (object) $entry;
+	}
+
+	/**
+	 * This function renders key event only for events
+	 * for which it makes sense to have key event html
+	 */
+	private function render_key_event( $entry ) {
+		if( ! $this->is_key_event() || $this->is_delete() ) {
+			return $entry;
+		}
+
+		$entry = apply_filters( 'liveblog_entry_for_json', $entry, $this );
+		return $entry;
 	}
 
 	public function get_fields_for_render() {
