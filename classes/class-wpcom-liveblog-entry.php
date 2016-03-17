@@ -196,6 +196,14 @@ class WPCOM_Liveblog_Entry {
 
 		$entry = apply_filters( 'liveblog_entry_template_variables', $entry );
 
+		// Switch rendered entry id for original event id.
+		// This way client will be able to reference original event
+		// with its next actions.
+		if ( $this->is_update() ) {
+			$entry['entry_id'] = $this->repleaces;
+		} elseif ( $this->is_delete() ) {
+			$entry['entry_id'] = $this->deletes;
+		}
 		return WPCOM_Liveblog::get_template_part( $template, $entry );
 	}
 
