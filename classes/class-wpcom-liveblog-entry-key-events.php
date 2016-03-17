@@ -333,17 +333,17 @@ class WPCOM_Liveblog_Entry_Key_Events {
 			'meta_value' => self::meta_value,
 		);
 
+		// Get maximal number of entries to display.
 		$limit = get_post_meta( $post->ID, self::meta_key_limit, true );
-		if ( isset( $limit ) ) {
-			$args['number'] = $limit;
-		}
 
 		// Build the entry query.
 		$entry_query = new WPCOM_Liveblog_Entry_Query( $post->ID, WPCOM_Liveblog::key );
 
 		// Execute the entry query with the previously defined args.
-		$entries     = (array) $entry_query->get_all( $args );
-
+		$entries  = (array) $entry_query->get_all_key_events();
+		if ( isset($limit) ) {
+			$entries = array_slice( $entries, 0, $limit);
+		}
 		// Grab the template to use.
 		$template    = self::get_current_template( $post->ID );
 
