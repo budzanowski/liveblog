@@ -326,7 +326,17 @@
 		},
 		submit: function(e) {
 			e.preventDefault();
-			this.crud('update');
+			var new_entry_content = this.$textarea.val().trim();
+			var old_entry_content = this.get_content_for_form();
+			if( new_entry_content === old_entry_content ){
+				this.$entry_text.show();
+				this.$entry.find('.liveblog-entry-edit').show();
+				this.$entry.find('.liveblog-entry-actions .liveblog-entry-delete').show();
+				this.remove();
+			}
+			else {
+				this.crud('update');
+			}
 		}
 	});
 
