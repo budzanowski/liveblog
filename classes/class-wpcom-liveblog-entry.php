@@ -11,8 +11,9 @@ class WPCOM_Liveblog_Entry {
 	 * @var string In case the current entry is an edit (replaces) of
 	 * another entry, we store the other entry's ID in this meta key.
 	 */
-	const replaces_meta_key    = 'liveblog_replaces';
-	const deletes_meta_key     = 'liveblog_deletes';
+	const replaces_meta_key  = 'liveblog_replaces';
+	const deletes_meta_key   = 'liveblog_deletes';
+	const key_event_meta_key  = WPCOM_Liveblog_Entry_Key_Events::meta_key;
 	const new_type    = 'new';
 	const delete_type = 'delete';
 	const update_type = 'update';
@@ -32,7 +33,7 @@ class WPCOM_Liveblog_Entry {
 	private function set_type() {
 		$this->replaces  = get_comment_meta( $this->comment->comment_ID, self::replaces_meta_key, true );
 		$this->deletes   = get_comment_meta( $this->comment->comment_ID, self::deletes_meta_key, true );
-		$this->key_event = get_comment_meta( $this->comment->comment_ID, WPCOM_Liveblog_Entry_Key_Events::meta_key, true);
+		$this->key_event = get_comment_meta( $this->comment->comment_ID, self::key_event_meta_key, true);
 		if ( $this->replaces ) {
 			$this->type = self::update_type;
 		} elseif ( $this->deletes ) {
