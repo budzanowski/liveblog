@@ -306,7 +306,8 @@
 			this.$entry_text = this.$entry.find('.liveblog-entry-text');
 		},
 		get_content_for_form: function() {
-			return this.$entry_text.data('original-content');
+			return this.$entry_text.data('original-content')
+				.replace('<span class="liveblog-command type-key">key</span>', '/key');
 		},
 		get_id_for_ajax_request: function() {
 			return this.$entry.attr('id').replace('liveblog-entry-', '');
