@@ -44,6 +44,49 @@ class WPCOM_Liveblog_Entry_Query {
 		return $this->get( $args );
 	}
 
+	/**
+	 * Get key events from liveblog entries
+	 *
+	 */
+	public function get_all_key_events( ) {
+		//We want ascending order because we will parse events
+		// from the beggining
+		$args = array( 'order' => 'ASC' );
+		$all_events = $this->get_all( $args );
+		if(  empty( $all_events ) ) {
+			return array();
+		}
+		$aggregated = $this->aggregate( $all_events );
+		$key_events = array_filter( $aggregated, function( $event ) {
+		 	return $event->is_key_event();
+		});
+		//reverse so the newest will be first
+		return array_reverse( $key_events );
+	}
+
+	private function aggregate( $all_events ) {
+		$aggregated = array();
+		foreach( $all_events as $event ) {
+			if ( $event->is_new() ) {
+				$id = $event->get_id();
+				$aggregated[ $id ] = $event;
+			} elseif ( $event->is_delete() ) {
+				$id = $event->deletes;
+				unset( $aggregated[ $id ] );
+			} elseif ( $event->is_update() ) {
+				$id = $event->replaces;
+				$aggregated[ $id ]->set_content( $event->get_content() );
+				if( $event->is_key_event() ) {
+					$aggregated[ $id ]->set_key_event();
+				} else {
+					$aggregated[ $id ]->unset_key_event();
+				}
+			}
+		}
+		return $aggregated;
+
+	}
+
 	public function count( $args = array() ) {
 		return count( $this->get_all( $args ) );
 	}
