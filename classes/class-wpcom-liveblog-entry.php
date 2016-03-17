@@ -85,6 +85,10 @@ class WPCOM_Liveblog_Entry {
 		return $this->comment->comment_content;
 	}
 
+	public function set_content( $content ) {
+		$this->comment->comment_content = $content;
+	}
+
 	public function get_type() {
 		return $this->type;
 	}
