@@ -196,13 +196,15 @@ class WPCOM_Liveblog_Entry {
 
 		$entry = apply_filters( 'liveblog_entry_template_variables', $entry );
 
-		// Switch rendered entry id for original event id.
+		// Switch rendered entry id and css classes for original ones.
 		// This way client will be able to reference original event
 		// with its next actions.
 		if ( $this->is_update() ) {
-			$entry['entry_id'] = $this->repleaces;
+			$entry['entry_id'] = $this->replaces;
+			$entry['css_classes'] = implode( ' ', get_comment_class( '', $entry['entry_id'], $entry['post_id'] ) );
 		} elseif ( $this->is_delete() ) {
 			$entry['entry_id'] = $this->deletes;
+			$entry['css_classes'] = implode( ' ', get_comment_class( '', $entry['entry_id'], $entry['post_id'] ) );
 		}
 		return WPCOM_Liveblog::get_template_part( $template, $entry );
 	}
