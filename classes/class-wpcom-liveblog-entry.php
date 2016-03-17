@@ -109,9 +109,14 @@ class WPCOM_Liveblog_Entry {
 		return $this->key_event;
 	}
 
-	public function set_key() {
+	public function set_key_event() {
 		$this->key_event = true;
 	}
+
+	public function unset_key_event() {
+		$this->key_event = false;
+	}
+
 	/**
 	 * Get the GMT timestamp for the comment
 	 *
