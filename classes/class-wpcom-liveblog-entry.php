@@ -105,6 +105,9 @@ class WPCOM_Liveblog_Entry {
 		return $this->key_event;
 	}
 
+	public function set_key() {
+		$this->key_event = true;
+	}
 	/**
 	 * Get the GMT timestamp for the comment
 	 *
