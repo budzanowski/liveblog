@@ -152,7 +152,7 @@
 		updateEntries: function() {
 			for( var i = 0; i < lazyloader.EntriesToRender.length; i++ ) {
 				var entry = lazyloader.EntriesToRender[ i ];
-				for( var j = 0; j < lazyloader.EntriesToUpdate.length; j++ ) {
+				for( var j = lazyloader.EntriesToUpdate.length - 1; j >= 0; j-- ) {
 					var update = lazyloader.EntriesToUpdate[ j ];
 					if ( entry.id == update.id ) {
 						lazyloader.updateEntry( entry, update );
