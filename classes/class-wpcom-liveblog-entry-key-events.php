@@ -341,7 +341,7 @@ class WPCOM_Liveblog_Entry_Key_Events {
 
 		// Execute the entry query with the previously defined args.
 		$entries  = (array) $entry_query->get_all_key_events();
-		if ( isset($limit) ) {
+		if ( isset($limit) && $limit != 0 ) {
 			$entries = array_slice( $entries, 0, $limit);
 		}
 		// Grab the template to use.
