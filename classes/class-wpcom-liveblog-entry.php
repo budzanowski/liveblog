@@ -297,12 +297,19 @@ class WPCOM_Liveblog_Entry {
 	}
 
 	public static function delete_key( $args ) {
+		global $post;
+
 		if ( !$args['entry_id'] ) {
 			return new WP_Error( 'entry-delete', __( 'Missing entry ID', 'liveblog' ) );
 		}
-		if ( ! WPCOM_Liveblog_Entry_Key_Events::remove_key_action( $args['entry_id'] ) ) {
-			return new WP_Error( 'entry-delete-key', __( 'Key event not deleted' ) );
-		}
+
+		$entry_query = new WPCOM_Liveblog_Entry_Query( $post->ID, WPCOM_Liveblog::key );
+
+		$key_event = $entry_query->get_key_event_by_id( $args['entry_id'] );
+		$content   = $key_event->get_content();
+		$content = preg_replace("/<span class=\"liveblog-command type-key\">key<\/span>/", "", $content);
+		$args['content'] = $content;
+
 		$entry = self::update( $args );
 		return $entry;
 	}

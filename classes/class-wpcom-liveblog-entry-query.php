@@ -87,6 +87,16 @@ class WPCOM_Liveblog_Entry_Query {
 
 	}
 
+	public function get_key_event_by_id( $id ) {
+		$all_key_events = $this->get_all_key_events();
+		foreach( $all_key_events as $event ) {
+			if ( $event->get_id() == $id ) {
+				return $event;
+			}
+		}
+		return null;
+	}
+
 	public function count( $args = array() ) {
 		return count( $this->get_all( $args ) );
 	}
