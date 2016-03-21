@@ -281,6 +281,9 @@ window.liveblog = window.liveblog || {};
 		return $('.liveblog-entry-class-' + id );
 	};
 
+	liveblog.get_key_event_by_id = function( id ) {
+		return $('.liveblog-key-entries .liveblog-entry-class-' + id );
+	};
 	// We rely on lazyloader to overwrite this function. This way it can be
 	// used as callback to handle fresh events of update end delete type
 	// that target entries not currently in DOM
