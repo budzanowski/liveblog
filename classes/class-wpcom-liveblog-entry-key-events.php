@@ -186,6 +186,14 @@ class WPCOM_Liveblog_Entry_Key_Events {
 		}
 	}
 
+	static function get_key_events_limit() {
+		$limit = get_post_meta( get_the_ID(), self::meta_key_limit, true );
+		if( $limit == '' ){
+			return 0;
+		}
+		return $limit;
+	}
+
 	/**
 	 * Add a input for the user to pick a template.
 	 *
