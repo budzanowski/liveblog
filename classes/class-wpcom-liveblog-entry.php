@@ -155,6 +155,16 @@ class WPCOM_Liveblog_Entry {
 		}
 
 		$entry = apply_filters( 'liveblog_entry_for_json', $entry, $this );
+		$entry = $this->render_original_timestamp( $entry );
+		return $entry;
+	}
+
+	private function render_original_timestamp( $entry ) {
+		global $post;
+
+		$entry_query = new WPCOM_Liveblog_Entry_Query( $post->ID, WPCOM_Liveblog::key );
+		$original = $entry_query->get_by_id( $entry['id'] );
+		$entry['original_timestamp'] =  $original->get_timestamp();
 		return $entry;
 	}
 
