@@ -303,6 +303,7 @@ window.liveblog = window.liveblog || {};
 			} else {
 				liveblog.lazyloaderHandleEvent( new_entry );
 			}
+			liveblog.update_key_entries( new_entry );
 		} else if ('delete' === new_entry.type) {
 			if ( $entry.length) {
 				liveblog.delete_entry( $entry );
@@ -330,6 +331,45 @@ window.liveblog = window.liveblog || {};
 		liveblog.$entry_container.find($entry).replaceWith( updated_entry.html );
 		liveblog.$key_entry_container.find($entry).replaceWith( updated_entry.key );
 		liveblog.entriesContainer.updateTimes();
+	};
+
+	liveblog.update_key_entries = function( updated_entry ){
+		var $entry = liveblog.get_key_event_by_id( updated_entry.id );
+		var $key_event = liveblog.$key_entry_container.find($entry);
+		var $new_key_entry = $( updated_entry.key );
+
+		// Update if displayed
+		if( $key_event.length ){
+			$key_event.replaceWith( updated_entry.key );
+			return;
+		}
+
+		// Find position in list and add if there is place
+		$new_timestamp = updated_entry.original_timestamp;
+		var $key_entries = $( '.liveblog-key-entries .liveblog-entry' );
+		for( var i = 0; i < $key_entries.length; i++ ) {
+			var $timestamp = $($key_entries[ i ]).data('timestamp');
+
+			// true - proper spot in the list found.
+			if( $new_timestamp >= $timestamp ) {
+				var duration = 1000 * liveblog_settings.fade_out_duration;
+				$new_key_entry.addClass('highlight').insertBefore($($key_entries[ i ])).animate({backgroundColor: 'transparent'}, {duration: duration});
+
+				// Remove last element if list has become to big
+				if ( ( 0 != liveblog_settings.key_events_limit ) &&
+					( ( $key_entries.length + 1 ) > liveblog_settings.key_events_limit ) ) {
+					$( '.liveblog-key-entries .liveblog-entry' ).last().remove();
+				}
+				return;
+			}
+		}
+
+		// If previous step did not found proper place it means that this element should be last
+		// append it if there is place
+		if ( ( 0 == liveblog_settings.key_events_limit )
+			|| ( $key_entries.length < liveblog_settings.key_events_limit ) ) {
+			$new_key_entry.addClass('highlight').append( liveblog.$entry_container ).animate({backgroundColor: 'transparent'}, {duration: duration});
+		}
 	};
 
 	liveblog.delete_entry = function( $entry ) {
